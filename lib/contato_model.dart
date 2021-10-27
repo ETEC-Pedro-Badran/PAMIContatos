@@ -7,6 +7,8 @@ class Contato {
   //método construtor
   Contato();
 
+  get id => _id;
+
   //método construtor em sobrecarga
   Contato.fromMap(Map map) {
     _id = map['id'];
@@ -15,6 +17,7 @@ class Contato {
     _telefone = map['telefone'];
     _imagem = map['imagem'];
   }
+
   //método que converte um contato para um Map
   toMap() {
     return {
