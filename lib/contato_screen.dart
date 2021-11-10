@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
-class ContatoScreen extends StatelessWidget {
+import 'contato_model.dart';
+
+class ContatoScreen extends StatefulWidget {
   const ContatoScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ContatoScreen> createState() => _ContatoScreenState();
+}
+
+class _ContatoScreenState extends State<ContatoScreen> {
+  var contato = Contato();
 
   @override
   Widget build(BuildContext context) {
@@ -24,15 +34,30 @@ class ContatoScreen extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                      child: Container(
-                    height: 140,
-                    width: 140,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            fit: BoxFit.scaleDown,
-                            image: ExactAssetImage('images/person.png')),
-                        boxShadow: kElevationToShadow[1]),
+                      child: GestureDetector(
+                    onTap: () async {
+                      final ImagePicker _picker = ImagePicker();
+                      final XFile? photo =
+                          await _picker.pickImage(source: ImageSource.camera);
+
+                      setState(() {
+                        contato.imagem = photo!.path;
+                      });
+                    },
+                    child: Container(
+                      height: 140,
+                      width: 140,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: (contato.imagem == null)
+                              ? DecorationImage(
+                                  fit: BoxFit.scaleDown,
+                                  image: ExactAssetImage('images/person.png'))
+                              : DecorationImage(
+                                  fit: BoxFit.contain,
+                                  image: NetworkImage(contato.imagem)),
+                          boxShadow: kElevationToShadow[1]),
+                    ),
                   )),
                 ],
               ),

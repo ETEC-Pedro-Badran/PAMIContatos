@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class Contato {
   int? _id;
   String? _nome;
@@ -8,6 +10,9 @@ class Contato {
   Contato();
 
   get id => _id;
+  get imagem => _imagem;
+
+  set imagem(value) => _imagem = value;
 
   //método construtor em sobrecarga
   Contato.fromMap(Map map) {
