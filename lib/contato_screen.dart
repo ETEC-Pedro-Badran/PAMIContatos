@@ -1,7 +1,10 @@
+// ignore_for_file: prefer_const_constructors, prefer_final_fields
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'contato_model.dart';
+import 'database_helper.dart';
 
 class ContatoScreen extends StatefulWidget {
   const ContatoScreen({Key? key}) : super(key: key);
@@ -11,7 +14,11 @@ class ContatoScreen extends StatefulWidget {
 }
 
 class _ContatoScreenState extends State<ContatoScreen> {
-  var contato = Contato();
+  Contato _contato = Contato();
+
+  var nomeController = TextEditingController();
+  var emailController = TextEditingController();
+  var telefoneController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +29,32 @@ class _ContatoScreenState extends State<ContatoScreen> {
         backgroundColor: Colors.red,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () async {
+          /* validação*/
+          if (_contato.nome.length <= 3) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Preencha o nome com mais de 3 caracteres."),
+            ));
+            return;
+          }
+
+          if (!_contato.email.contains("@")) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Informe um email válido."),
+            ));
+            return;
+          }
+
+          if (_contato.telefone.length < 10) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Informe um telefone válido."),
+            ));
+            return;
+          }
+
+          await DatabaseHelper().inserir(_contato);
+          Navigator.of(context).pop();
+        },
         child: const Icon(Icons.save),
       ),
       body: Padding(
@@ -41,7 +73,7 @@ class _ContatoScreenState extends State<ContatoScreen> {
                           await _picker.pickImage(source: ImageSource.camera);
 
                       setState(() {
-                        contato.imagem = photo!.path;
+                        _contato.imagem = photo!.path;
                       });
                     },
                     child: Container(
@@ -49,26 +81,29 @@ class _ContatoScreenState extends State<ContatoScreen> {
                       width: 140,
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          image: (contato.imagem == null)
+                          image: (_contato.imagem == null)
                               ? DecorationImage(
                                   fit: BoxFit.scaleDown,
                                   image: ExactAssetImage('images/person.png'))
                               : DecorationImage(
                                   fit: BoxFit.contain,
-                                  image: NetworkImage(contato.imagem)),
+                                  image: NetworkImage(_contato.imagem)),
                           boxShadow: kElevationToShadow[1]),
                     ),
                   )),
                 ],
               ),
             ),
-            const TextField(
+            TextField(
+              onChanged: (value) => _contato.nome = value,
               decoration: InputDecoration(label: Text("Nome")),
             ),
-            const TextField(
+            TextField(
+              onChanged: (value) => _contato.email = value,
               decoration: InputDecoration(label: Text("Email")),
             ),
-            const TextField(
+            TextField(
+              onChanged: (value) => _contato.telefone = value,
               decoration: InputDecoration(label: Text("Telefone")),
             ),
           ],
