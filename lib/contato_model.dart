@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 class Contato {
   int? _id;
   String? _nome;
@@ -10,8 +8,15 @@ class Contato {
   Contato();
 
   get id => _id;
+  get nome => _nome;
+  get email => _email;
+  get telefone => _telefone;
+
   get imagem => _imagem;
 
+  set nome(value) => _nome = value;
+  set email(value) => _email = value;
+  set telefone(value) => _telefone = value;
   set imagem(value) => _imagem = value;
 
   //método construtor em sobrecarga
